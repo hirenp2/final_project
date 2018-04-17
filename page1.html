@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Drawing Animation</title>
+    <style>
+      #container {
+        width: 452px;
+        height: 100%;
+        margin: auto;
+      }
+
+      canvas {
+        border: 1px solid black;
+        position: absolute;
+        top: 50%;
+        margin-top: -150px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div id="container">
+
+      <canvas id="drawing" width="450" height="300">
+        <p>This browser doesn’t support the HTML canvas</p>
+      </canvas>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('drawing');
+      const context = canvas.getContext('2d');
+
+      var referenceWidth = 450;
+      var referenceHeight = 300;
+
+      function setup() {
+        // set the display size
+        canvas.style.width = referenceWidth + 'px';
+        canvas.style.height = referenceHeight + 'px';
+
+        // Set actual device pixels
+        var scale = window.devicePixelRatio;
+        console.log(scale);
+        canvas.width = referenceWidth * scale;
+        canvas.height = referenceHeight * scale;
+
+        // normalize the coordinate system
+        context.scale(scale, scale);
+
+        draw();
+      }
+
+      function draw() {
+        // variables for drawing the box
+
+        var pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+        var pixelData = pixels.data;
+        console.log(pixelData.length);
+
+        for (var y = 0; y < canvas.height; y++) { // for every row
+          for (var x = 0; x < canvas.width; x++) { // visit every column (pixel)
+            var index = (x + y * canvas.width) * 4; // index position of every pixel!
+            pixelData[index + 0] = 255; // red
+            pixelData[index + 1] = (x / canvas.width) * 255; // green
+            pixelData[index + 2] = (y / canvas.height) * 255; // blue
+            pixelData[index + 3] = 255; // alpha
+          }
+        }
+
+        context.putImageData(pixels, 0, 0);
+        var xPosition = 0;
+        var yPosition = 0;
+        var boxWidth = 50;
+        var boxHeight = 50;
+
+
+        // draw the initial box on the canvas
+        context.fillRect(xPosition, yPosition, boxWidth, boxHeight);
+
+        var xpixelShift = 3; // how many pixels the box should move per function call / frame
+        var ypixelShift = 3;
+
+        // box animation
+        function animate() {
+          // clear canvas
+          // context.clearRect(0, 0, referenceWidth, referenceHeight);
+
+          // or, create trailing effect with semi-transparent rectangle
+          context.fillStyle = 'rgba(255, 255, 255, 0.3)';
+          context.fillRect(0, 0, referenceWidth, referenceHeight);
+
+          // draw box in updated position
+          context.fillStyle = 'darkblue';
+          context.fillRect(xPosition, yPosition, boxWidth, boxHeight);
+          // update the x position
+          xPosition += xpixelShift;
+          yPosition += ypixelShift;
+
+          if (xPosition > referenceWidth - boxWidth || xPosition < 0) {
+            xpixelShift *= -1;
+          }
+          if (yPosition > referenceHeight - boxHeight || yPosition < 0) {
+            ypixelShift *= -1;
+          }
+
+          // recursive function call
+          requestAnimationFrame(animate);
+        }
+
+        animate();
+      }
+
+      window.addEventListener('load', setup);
+    </script>
+  </body>
+</html>
