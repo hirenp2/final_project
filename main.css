@@ -1,0 +1,43 @@
+h1 {
+  text-align: center;
+  font-family: arial black;
+  color: black;
+  margin-top: 1em;
+  font-size: 4em;
+  border-style: solid;
+}
+
+li {
+  font-size: 4em;
+  font-family: georgia;
+  list-style-type: none;
+  float: left;
+  margin-left: 1em;
+  margin-top: 1em;
+  text-decoration: none;
+}
+
+img {
+  float: left;
+  height: 15em;
+  width: 15em;
+}
+
+a:link {
+    text-decoration: none;
+    color: black;
+}
+
+a:visited {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    text-decoration: none;
+    border-style: solid;
+}
+
+a:active {
+    text-decoration: none;
+}

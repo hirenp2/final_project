@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Page Two</title>
+    <style>
+      #container {
+        width: 452px;
+        height: 100%;
+        margin: auto;
+      }
+
+      canvas {
+        border: 1px solid black;
+        position: absolute;
+        top: 0;
+        margin-top: 0px;
+        margin-left: -420px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container">
+      <canvas id="drawing" width="450" height="300">
+        <p>This browser doesn’t support the HTML canvas</p>
+      </canvas>
+
+      <audio controls autoplay>
+        <source src="neutral.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+      </audio>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('drawing');
+      const context = canvas.getContext('2d');
+
+      var referenceWidth = window.innerWidth;
+      var referenceHeight = window.innerHeight;
+
+      function setup() {
+        // set the display size
+        canvas.style.width = referenceWidth + 'px';
+        canvas.style.height = referenceHeight + 'px';
+
+        // Set actual device pixels
+        var scale = window.devicePixelRatio;
+        // console.log(scale);
+        canvas.width = referenceWidth * scale;
+        canvas.height = referenceHeight * scale;
+
+        // normalize the coordinate system
+        context.scale(scale, scale);
+
+        draw();
+      }
+
+      function draw() {
+
+        var pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+        var pixelData = pixels.data;
+        console.log(pixelData.length);
+
+        // random pixel values
+        for (var i = 0; i < pixelData.length; i += 4) {
+          pixelData[i] = Math.floor(Math.random() * 150); // RED
+          pixelData[i + 1] = Math.floor(Math.random() * 200); // GREEN
+          pixelData[i + 2] = Math.floor(Math.random() * 150); // BLUE
+          pixelData[i + 3] = 150; // ALPHA
+        }
+
+        context.putImageData(pixels, 0, 0);
+
+        var img = new Image(); // create an img element
+        img.src = 'x_eyes.svg'; // set the path to the image
+
+        var xPosition = 0;
+        var yPosition = 0;
+        var boxWidth = 100;
+        var boxHeight = 100;
+
+/*        img.addEventListener('load', function() {
+          for (var x = 0; x < 5; x++) {
+            for (var y = 0; y < 5; y++) {
+              context.drawImage(img, 0, 0, xPosition, yPosition);
+             }
+           }
+         }
+*/
+
+
+      var x = 25;
+      var y = 25;
+
+      var spacing = 75;
+      var radius = 50;
+
+      var alpha = 1;
+      var red = 255;
+      var green = 200;
+      var blue = 255;
+
+      for (var row = 0; row < referenceHeight; row += spacing) {
+        for (var col = 0; col < referenceWidth; col += spacing) {
+          context.beginPath();
+          context.ellipse(x, y, radius, radius, 0, 0, 2 * Math.PI);
+          context.strokeStyle = 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')';
+          context.stroke();
+          green += 2;
+          blue += 2;
+          x += spacing;
+        }
+        x = 50;
+        y += spacing;
+      }
+
+        // draw the initial box on the canvas
+        context.fillRect(xPosition, yPosition, boxWidth, boxHeight);
+
+        var xpixelShift = 3; // how many pixels the box should move per function call / frame
+        var ypixelShift = 3;
+
+        // box animation
+        function animate() {
+          // clear canvas
+          // context.clearRect(0, 0, referenceWidth, referenceHeight);
+
+          // or, create trailing effect with semi-transparent rectangle
+          context.fillStyle = 'rgba(255, 255, 255, 0.1)';
+          context.fillRect(0, 0, referenceWidth, referenceHeight);
+
+          // draw box in updated position
+          context.fillStyle = 'white';
+          context.fillRect(xPosition, yPosition, boxWidth, boxHeight);
+          // update the x position
+          xPosition += xpixelShift;
+          yPosition += ypixelShift;
+
+          if (xPosition > referenceWidth - boxWidth || xPosition < 0) {
+            xpixelShift *= -1;
+          }
+          if (yPosition > referenceHeight - boxHeight || yPosition < 0) {
+            ypixelShift *= -1;
+          }
+
+          // recursive function call
+          requestAnimationFrame(animate);
+        }
+
+        animate();
+      }
+
+
+
+      window.addEventListener('load', setup);
+    </script>
+  </body>
+</html>
